@@ -84,3 +84,5 @@ Implement the following improvements:
 The app is able to estimate the quality of guesses
 The estimated guessing qualiy if presented on the stats page in an interesting and transparent way to the user
 
+url :[text](app.py)
+https://who-am-i-to.streamlit.app/
