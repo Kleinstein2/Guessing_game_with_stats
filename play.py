@@ -95,10 +95,11 @@ if Lives_left > 0:
 st.write("Who am I?")
 cols = st.columns(5)
 for i, name in enumerate(names):
-    cols[i % 5].image(CHARACTERS[name]) if os.path.exists(CHARACTERS[name]) else cols[i % 5].write("❓")
+    if os.path.exists(CHARACTERS[name]):
+        cols[i % 5].image(CHARACTERS[name])
+    else:
+        cols[i % 5].write("❓")
     cols[i % 5].button(name,key=f"guess_{name}",on_click=check_guess,args=(name,),disabled=not st.session_state["guess_mode"] or st.session_state["Game_over"],use_container_width=True,)
-
-for msg in st.session_state["chat"]:
     with st.chat_message(msg["role"]):
         st.write(msg["content"])
 
