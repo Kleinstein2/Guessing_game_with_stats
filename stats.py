@@ -26,7 +26,7 @@ st.subheader("All Games")
 st.dataframe(df)
 
 if st.button("Start Over"):
-    for key in ["random_name", "Lives", "Game_over", "guess_mode", "started", "questions", "time", "message"]:
+    for key in ["random_name", "lives", "Game_over", "guess_mode", "started", "questions", "time", "message"]:
         st.session_state.pop(key, None)
     st.switch_page("play.py")
 
