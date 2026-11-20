@@ -2,7 +2,7 @@
 
 2. [Streamlit-URL] / [GitHub-URL]
 
-3. Rules are simple: just try to guess which character the LLM got with yes or no questions. Every 5 questions you are forced to guess, but if you are sure you know it you can click the guess button. After that you can look at your stats and the best and worst question.
+3. Rules are simple: just try to guess which character the LLM got with yes or no questions. Every 3 questions you are forced to guess, but if you are sure you know it you can click the guess button. After that you can look at your stats and the best and worst question.
 
 4. The app.py is only for the navigation between the pages. The play.py has the whole game with the start screen, the board with all the characters, the chat with the witch and the buttons. The stats.py shows all the stats after a round. In the Images folder are the pictures of all characters and the heart.
 
