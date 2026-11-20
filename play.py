@@ -120,14 +120,14 @@ if forced_guess:
     st.session_state["guess_mode"] = True
 
 Lives_left = st.session_state["lives"]
-left, right = st.columns([3, 2])          #anpassung seiten aufteilung
+left, right = st.columns([2, 3])          #anpassung seiten aufteilung
 
 with left:
     st.write("Who am I?")
     cols = st.columns(5)
     for i, name in enumerate(names):
         if os.path.exists(CHARACTERS[name]):
-            cols[i % 5].image(CHARACTERS[name], width=115)
+            cols[i % 5].image(CHARACTERS[name])
         else:
             cols[i % 5].write("?")
         cols[i % 5].button(name,key=f"guess_{name}",on_click=check_guess,args=(name,),disabled=not st.session_state["guess_mode"] or st.session_state["Game_over"],use_container_width=True,)
