@@ -87,9 +87,11 @@ def ask_witch(question):
             ],
         )
         text = response.choices[0].message.content
-        return [name for name in names if name in text]       
-    except OpenAIError as e:
-        st.error(e)          # nur zum Testen
+        result = [name for name in names if name in text]
+        if not result:
+            return None
+        return result
+    except OpenAIError:
         return None                                                         
 
 #Oberfläche
@@ -139,13 +141,16 @@ with right:
             with st.chat_message(msg["role"]):
                 st.write(msg["content"])
 
-    question = st.chat_input("Ask me a yes/no question...", disabled=st.session_state["Game_over"])
+    if "retry_text" in st.session_state:
+        st.session_state["question_input"] = st.session_state.pop("retry_text")
+    question = st.chat_input("Ask me a yes/no question...", key="question_input", disabled=st.session_state["Game_over"])
     if question:
         st.session_state["chat"].append({"role": "user", "content": question})
         with st.spinner("The witch is thinking..."):
             yes = ask_witch(question)
         if yes is None:
-            reply = "My crystal ball is cloudy... (connection problem, try again)"
+            st.session_state["retry_text"] = question
+            reply = "That is no proper yes/no question (or my crystal ball is cloudy). Try again, dear."
         else:
             answer = st.session_state["random_name"] in yes                       # nur ja wenn figur dabei
             before = len(st.session_state["remaining"])

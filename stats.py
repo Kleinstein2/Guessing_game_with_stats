@@ -33,7 +33,6 @@ if not history.empty:
     worst = history.loc[history["ruled out"].idxmin()]
     st.success(f"Best question: {best['question']} ({best['ruled out']} ruled out)")
     st.warning(f"Worst question: {worst['question']} ({worst['ruled out']} ruled out)")
-
 if st.button("Start Over"):
     for key in ["random_name", "lives", "Game_over", "guess_mode", "started", "questions", "time", "message",
                 "chat", "remaining", "question_log"]:
