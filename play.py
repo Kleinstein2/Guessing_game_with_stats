@@ -86,7 +86,7 @@ def ask_witch(question):
                 {"role": "user", "content": question},
             ],
         )
-        text = response.choices[0].message.content
+        text = response.choices[0].message.content or ""
         result = [name for name in names if name in text]
         if not result:
             return None
