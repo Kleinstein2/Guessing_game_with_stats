@@ -18,9 +18,7 @@ Greetings = ["Ooh the famous knight {name}, I see. Lets see if you can best me..
 # Game state
 st.session_state.setdefault("random_name", random.choice(names))  # Alle Konstanten
 st.session_state.setdefault("lives", Max_Live)
-st.session_state.setdefault("guesser", True)
 st.session_state.setdefault("Game_over", False)
-st.session_state.setdefault("stats_page", False)
 st.session_state.setdefault("guess_mode", False) 
 st.session_state.setdefault("started", False)
 st.session_state.setdefault("player_name", "")
@@ -36,7 +34,7 @@ st.session_state.setdefault("question_history", [])
 def start_game():   # Startet das Spiel, setzt die Zeit und die Nachricht
     st.session_state["time"] = time.time()
     st.session_state["started"] = True
-    st.session_state["message"] = "Dont Forget to ask as much as you want, but you can only guess 3 times."
+    st.session_state["message"] = f"Don't forget to ask as much as you want, but you can only guess {Max_Live} times."
 
 def guess():    # Guess Knopf 
     st.session_state["guess_mode"] = not st.session_state["guess_mode"]
@@ -54,7 +52,7 @@ def check_guess(user_guess):    # Guckt ob die Antwort richtig ist, wenn nicht w
             st.session_state["Game_over"] = True
             save_game(False)
         else:
-            st.session_state["message"] = f"{user_guess} is wrong! You have only ({st.session_state['lives']} trys left)"
+            st.session_state["message"] = f"{user_guess} is wrong! You have only ({st.session_state['lives']} tries left)"
 
 def give_up():  # Aufgeben :////
     st.session_state["Game_over"] = True
@@ -109,7 +107,7 @@ if not st.session_state["started"]: # Startbildschirm
     st.title("Who am I?")
     st.write("Let me know your name, little one. If you will, I have a proposal for you: Guess who I am. If you fail, you will lose everything.")
     st.session_state["player_name"] = st.text_input("Enter your name:", value=st.session_state["player_name"])  # Nach start-over bleibt name
-    if st.session_state["player_name"]:                            # FIX: eingerückt
+    if st.session_state["player_name"]:
         st.write(random.choice(Greetings).format(name=st.session_state["player_name"]))
     st.button("Start Game", on_click=start_game, disabled=not st.session_state["player_name"])
     st.stop()
