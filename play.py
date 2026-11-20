@@ -95,7 +95,9 @@ def ask_witch(question):
 #Oberfläche
  # LLM: API-Key abfragen, stoppen wenn keiner da ist (wie in 07-aiapp.py)
 with st.sidebar:
-     api_key = st.text_input("UOS AI API-Key", type="password", key="uos_api_key").strip()
+    api_key = st.text_input("UOS AI API-Key", type="password", value=st.session_state.get("api_key", "")).strip()
+st.session_state["api_key"] = api_key        # Bei start over bleibt key
+
 if not api_key:
         st.info("Please enter your Uni Osnabrück API key. You can get one at https://ai-keys.uni-osnabrueck.de.")
         st.stop()
@@ -104,7 +106,7 @@ client = OpenAI(base_url="https://litellm.uni-osnabrueck.de/v1", api_key=api_key
 if not st.session_state["started"]:
     st.title("Who am I?")
     st.write("Let me know your name, little one. If you will, I have a proposal for you: guess who I am. If you fail, you will lose everything.")
-    st.session_state["player_name"] = st.text_input("Enter your name:", key="name_input")
+    st.session_state["player_name"] = st.text_input("Enter your name:", value=st.session_state["player_name"]) # nach start over bleibt name
     if st.session_state["player_name"]:                            # FIX: eingerückt
         st.write(random.choice(Greetings).format(name=st.session_state["player_name"]))
     st.button("Start Game", on_click=start_game, disabled=not st.session_state["player_name"])

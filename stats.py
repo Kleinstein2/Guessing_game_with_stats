@@ -25,24 +25,17 @@ st.bar_chart(df["questions"])
 st.subheader("All Games")
 st.dataframe(df)
 
-# # LLM: Fragequalität = wie viele Figuren eine Frage ausgeschlossen hat
-# st.header("How good were your questions?")
-# st.caption("A good question rules out many characters, a bad one none. 'left_at_guess' in the table above: 1 = you figured it out, many = you guessed.")
-# history = pd.DataFrame(st.session_state.get("question_history", []))
-# if not history.empty:
-#     history["ruled out"] = history["before"] - history["after"]
-#     st.metric("Avg characters ruled out per question", round(history["ruled out"].mean(), 1))
-#     st.subheader("Characters left after each question (last game)")
-#     last = history[history["game"] == history["game"].max()]
-#     st.line_chart(last["after"].reset_index(drop=True))
-#     st.dataframe(history, hide_index=True)
-
+# beste und schlechteste Frage
+history = pd.DataFrame(st.session_state.get("question_history", []))
+if not history.empty:
+    history["ruled out"] = history["before"] - history["after"]     # ausgeschlossene Figuren pro Frage
+    best = history.loc[history["ruled out"].idxmax()]
+    worst = history.loc[history["ruled out"].idxmin()]
+    st.success(f"Best question: {best['question']} ({best['ruled out']} ruled out)")
+    st.warning(f"Worst question: {worst['question']} ({worst['ruled out']} ruled out)")
 
 if st.button("Start Over"):
     for key in ["random_name", "lives", "Game_over", "guess_mode", "started", "questions", "time", "message"]:
-#     # LLM: statt der Zeile darüber
-#     for key in ["random_name", "lives", "Game_over", "guess_mode", "started", "questions", "time", "message",
-#                 "chat", "remaining", "question_log"]:
 
         st.session_state.pop(key, None)
     st.switch_page("play.py")
