@@ -35,10 +35,8 @@ if not history.empty:
     st.warning(f"Worst question: {worst['question']} ({worst['ruled out']} ruled out)")
 
 if st.button("Start Over"):
-    for key in ["random_name", "lives", "Game_over", "guess_mode", "started", "questions", "time", "message"]:
-
+    for key in ["random_name", "lives", "Game_over", "guess_mode", "started", "questions", "time", "message",
+                "chat", "remaining", "question_log"]:
         st.session_state.pop(key, None)
     st.switch_page("play.py")
 
-#best_question=
-#worst_question=
