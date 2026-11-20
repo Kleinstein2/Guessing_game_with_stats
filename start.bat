@@ -1,3 +1,4 @@
+#download and install all mandatory things
 @echo off
 cd /d "%~dp0"
 if not exist ".venv\Scripts\python.exe" python -m venv .venv
