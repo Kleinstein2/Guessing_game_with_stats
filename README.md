@@ -14,3 +14,5 @@ Code: https://github.com/Kleinstein2/Guessing_game_with_stats
 7. We implemented a start.bat just so you can pull the git, press start and play instead of using a terminal. The API key will be input on the site itself, so no worry about it being leaked.
 
 8. Except the hearts, all pictures were created using Gemini, as we thought that was easier because of copyright, and we hope it is an acceptable use of AI. The heart was created by WildGoblinDev.
+
+9. Who did what: Malte Bernstein, Niklas Theodor Vartman and Jan Thöle. We all contributed about equally to the project.
