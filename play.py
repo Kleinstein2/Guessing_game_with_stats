@@ -86,10 +86,12 @@ def ask_witch(question):
                 {"role": "user", "content": question},
             ],
         )
-        text = response.choices[0].message.content
-        return [name for name in names if name in text]       
-    except OpenAIError as e:
-        st.error(e)          # nur zum Testen
+        text = response.choices[0].message.content or ""
+        result = [name for name in names if name in text]
+        if not result:
+            return None
+        return result
+    except OpenAIError:
         return None                                                         
 
 #Oberfläche
@@ -112,7 +114,8 @@ if not st.session_state["started"]: #startbildschirm
     st.button("Start Game", on_click=start_game, disabled=not st.session_state["player_name"])
     st.stop()
 
-if st.session_state["questions"] >= 5: #nach 5 fragen wird der spieler gezwungen zu raten
+forced_guess = st.session_state["questions"] >= 3 * (Max_Live - st.session_state["lives"] + 1) and not st.session_state["Game_over"]   # alle 3 Fragen muss geraten werden
+if forced_guess: #spieler wird gezwungen zu raten
     st.write("Did you really think you can ask as much as you want? It is time for a Guess dear guest")
     st.session_state["guess_mode"] = True
 
@@ -124,7 +127,7 @@ with left:
     cols = st.columns(5)
     for i, name in enumerate(names):
         if os.path.exists(CHARACTERS[name]):
-            cols[i % 5].image(CHARACTERS[name])
+            cols[i % 5].image(CHARACTERS[name], width=115)
         else:
             cols[i % 5].write("?")
         cols[i % 5].button(name,key=f"guess_{name}",on_click=check_guess,args=(name,),disabled=not st.session_state["guess_mode"] or st.session_state["Game_over"],use_container_width=True,)
@@ -139,13 +142,16 @@ with right: #leben nachricht und chat
             with st.chat_message(msg["role"]):
                 st.write(msg["content"])
 
-    question = st.chat_input("Ask me a yes/no question...", disabled=st.session_state["Game_over"]) #eingabe feld für frage nach dem spielende gespertt 
+    if "retry_text" in st.session_state:
+        st.session_state["question_input"] = st.session_state.pop("retry_text")
+    question = st.chat_input("Ask me a yes/no question...", key="question_input", disabled=st.session_state["Game_over"] or forced_guess) #eingabe feld für frage nach dem spielende gespertt
     if question:
         st.session_state["chat"].append({"role": "user", "content": question})
         with st.spinner("The witch is thinking..."):
             yes = ask_witch(question)
         if yes is None:
-            reply = "My crystal ball is cloudy... (connection problem, try again)"
+            st.session_state["retry_text"] = question
+            reply = "That is no proper yes/no question (or my crystal ball is cloudy). Try again, dear."
         else:
             answer = st.session_state["random_name"] in yes                       # nur ja wenn figur dabei
             before = len(st.session_state["remaining"])
@@ -162,7 +168,7 @@ with right: #leben nachricht und chat
         st.rerun()
 
     #Knöpfe
-    st.button("Guess", key="guess_button", on_click=guess, disabled=st.session_state["Game_over"])
+    st.button("Guess", key="guess_button", on_click=guess, disabled=st.session_state["Game_over"] or forced_guess)
     st.button("Give Up", key="give_up_button", on_click=give_up, disabled=st.session_state["Game_over"])
     if st.session_state["Game_over"]:
         if st.button("See your stats"):

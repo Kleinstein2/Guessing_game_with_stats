@@ -23,7 +23,7 @@ st.subheader("Questions per Game")
 st.bar_chart(df["questions"]) #fragen pro spiel als balkendiagramm
 
 st.subheader("All Games")
-st.dataframe(df)
+st.dataframe(df.sort_values(["lives_lost","seconds"])) #leben über zeit
 
 # beste und schlechteste Frage
 history = pd.DataFrame(st.session_state.get("question_history", []))
@@ -33,7 +33,6 @@ if not history.empty:
     worst = history.loc[history["ruled out"].idxmin()] #schlechteste frage = die, die die wenigsten figuren ausschließt
     st.success(f"Best question: {best['question']} ({best['ruled out']} ruled out)")
     st.warning(f"Worst question: {worst['question']} ({worst['ruled out']} ruled out)")
-
 if st.button("Start Over"):
     for key in ["random_name", "lives", "Game_over", "guess_mode", "started", "questions", "time", "message", 
                 "chat", "remaining", "question_log"]: #löscht spieldaten aus dem session state, damit man wieder von vorne anfangen kann
