@@ -23,7 +23,7 @@ st.subheader("Questions per Game")
 st.bar_chart(df["questions"])
 
 st.subheader("All Games")
-st.dataframe(df)
+st.dataframe(df.sort_values(["lives_lost","seconds"])) #leben über zeit
 
 # beste und schlechteste Frage
 history = pd.DataFrame(st.session_state.get("question_history", []))
