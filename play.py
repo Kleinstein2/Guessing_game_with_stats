@@ -2,17 +2,15 @@ import streamlit as st
 import random
 import time
 import os
-
+# from openai import OpenAI, OpenAIError        # LLM: wie in 07-aiapp.py
 
 names = ["Pinocchio","The Frog Prince","Puss in Boots","The Bremen Town Musicians","Mother Holle","The Genie","The Seven Dwarfs","Rumpelstiltskin",
-        "Snow White","Cinderella","Red Riding Hood","Sleeping Beauty","Rapunzel","Rapunzel","Hansel","Gretel",
+        "Snow White","Cinderella","Red Riding Hood","Sleeping Beauty","Rapunzel","Rapunzel (Tower)","Hansel","Gretel",
         "The Witch","The Pied Piper","The Snow Queen","The Big Bad Wolf","King Thrushbeard","The Star Money Girl"]#Personen Liste
-
-
 CHARACTERS = {name: f"Images/{name}.png" for name in names}                          
 Max_Live = 3
 
-Greetings = ["Ooh  the famous knight {name},I see. Lets see if you can best me",
+Greetings = ["Ooh  the famous knight {name}, I see. Lets see if you can best me",
 "A losy jester not even worth remembering by name, but a word is a word i suppose.Just dont expeact to win",
 "A brave soul, I see. I will give you a chance to prove yourself. But be warned, the path ahead is treacherous.",
 "The king himself? I am honored to have you here. But do not let your title fool you, for the game I propose is not for the faint of heart."]
@@ -30,6 +28,9 @@ st.session_state.setdefault("games",[])
 st.session_state.setdefault("questions",0)
 st.session_state.setdefault("time",0)
 st.session_state.setdefault("chat", [])
+# st.session_state.setdefault("remaining", list(names))   # LLM: Figuren, die noch möglich sind
+# st.session_state.setdefault("question_log", [])         # LLM: Fragen im aktuellen Spiel
+# st.session_state.setdefault("question_history", [])     # LLM: Fragen aller Spiele (für Stats)
 
 #Funktionen
 def start_game():
@@ -68,9 +69,37 @@ def save_game(won):
         "questions": st.session_state["questions"],
         "lives_lost": Max_Live - st.session_state["lives"],
         "seconds": round(time.time() - st.session_state["time"]),
+#         "left_at_guess": len(st.session_state["remaining"]),   # LLM: 1 = kombiniert, viele = geraten
     })
+#     for q in st.session_state["question_log"]:                  # LLM: Fragen für die Stats-Seite sichern
+#         st.session_state["question_history"].append({"game": len(st.session_state["games"]), **q})
+#
+# # LLM: fragt die KI, für welche Figuren die Antwort "Ja" ist (Aufbau wie in 07-aiapp.py)
+# def ask_witch(question):
+#     try:
+#         response = client.chat.completions.create(
+#             model="google/gemma-4-E4B-it",
+#             messages=[
+#                 {"role": "system", "content": "We play 'Who am I?' with these fairy tale characters: "
+#                  + ", ".join(names) + ". The user asks a yes/no question. List ALL characters for which "
+#                  "the answer is yes, separated by commas. Write nothing else."},
+#                 {"role": "user", "content": question},
+#             ],
+#         )
+#         text = response.choices[0].message.content
+#         return [name for name in names if name in text]       # Namen aus der Antwort heraussuchen
+#     except OpenAIError:
+#         return None                                             # Fehler -> kein Absturz
 
 #Oberfläche
+# # LLM: API-Key abfragen, stoppen wenn keiner da ist (wie in 07-aiapp.py)
+# with st.sidebar:
+#     api_key = st.text_input("UOS AI API-Key", type="password", key="uos_api_key").strip()
+# if not api_key:
+#     st.info("Please enter your Uni Osnabrück API key. You can get one at https://ai-keys.uni-osnabrueck.de.")
+#     st.stop()
+# client = OpenAI(base_url="https://litellm.uni-osnabrueck.de/v1", api_key=api_key)
+
 if not st.session_state["started"]:
     st.title("Who am I?")
     st.write("Let me know your name, little one. If you will, I have a proposal for you: guess who I am. If you fail, you will lose everything.")
@@ -112,6 +141,24 @@ if question:
     st.session_state["chat"].append({"role": "user", "content": question})
     st.session_state["questions"] += 1                                                       
     st.session_state["chat"].append({"role": "assistant", "content": "Hmm... I won't tell you yet."})
+#     # LLM: statt der zwei Zeilen darüber
+#     with st.spinner("The witch is thinking..."):
+#         yes = ask_witch(question)
+#     if yes is None:
+#         reply = "My crystal ball is cloudy... (connection problem, try again)"
+#     else:
+#         answer = st.session_state["random_name"] in yes                       # Ja, wenn die geheime Figur dabei ist
+#         before = len(st.session_state["remaining"])
+#         st.session_state["remaining"] = [n for n in st.session_state["remaining"] if (n in yes) == answer]
+#         st.session_state["questions"] += 1
+#         st.session_state["question_log"].append({
+#             "question": question,
+#             "answer": "Yes" if answer else "No",
+#             "before": before,
+#             "after": len(st.session_state["remaining"]),
+#         })
+#         reply = "Yes!" if answer else "No!"
+#     st.session_state["chat"].append({"role": "assistant", "content": reply})
     st.rerun()                                                                               
 
 #Könpfe
