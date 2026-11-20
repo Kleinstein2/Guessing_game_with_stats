@@ -151,7 +151,7 @@ with right: #leben nachricht und chat
             yes = ask_witch(question)
         if yes is None:
             st.session_state["retry_text"] = question
-            reply = "That is no proper yes/no question (or my crystal ball is cloudy). Try again, dear."
+            reply = "You know the rules, just Yes and No questions. Try again, dear."
         else:
             answer = st.session_state["random_name"] in yes                       # nur ja wenn figur dabei
             before = len(st.session_state["remaining"])
