@@ -10,7 +10,7 @@ names = ["Pinocchio","The Frog Prince","Puss in Boots","The Bremen Town Musician
 CHARACTERS = {name: f"Images/{name}.png" for name in names}                          
 Max_Live = 3
 
-Greetings = ["Ooh  the famous knight {name},I see. Lets see if you can best me",
+Greetings = ["Ooh  the famous knight {name}, I see. Lets see if you can best me",
 "A losy jester not even worth remembering by name, but a word is a word i suppose.Just dont expeact to win",
 "A brave soul, I see. I will give you a chance to prove yourself. But be warned, the path ahead is treacherous.",
 "The king himself? I am honored to have you here. But do not let your title fool you, for the game I propose is not for the faint of heart."]
