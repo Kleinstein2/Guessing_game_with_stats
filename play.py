@@ -88,8 +88,9 @@ def ask_witch(question):
         )
         text = response.choices[0].message.content
         return [name for name in names if name in text]       
-    except OpenAIError:
-        return None                                                             
+    except OpenAIError as e:
+        st.error(e)          # nur zum Testen
+        return None                                                         
 
 #Oberfläche
  # LLM: API-Key abfragen, stoppen wenn keiner da ist (wie in 07-aiapp.py)
