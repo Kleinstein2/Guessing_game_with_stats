@@ -2,21 +2,21 @@ import streamlit as st
 import random
 import time
 import os
-from openai import OpenAI, OpenAIError     #verbindung zum LLM   
+from openai import OpenAI, OpenAIError     # Verbindung zum LLM   
 
 names = ["Pinocchio","The Frog Prince","Puss in Boots","The Bremen Town Musicians","Mother Holle","The Genie","The Seven Dwarfs","Rumpelstiltskin",
         "Snow White","Cinderella","Red Riding Hood","Sleeping Beauty","The Snow Queen","Hansel","Gretel",
-        "The Witch","The Pied Piper","The Big Bad Wolf","King Thrushbeard","The Star Money Girl"]#Personen Liste
-CHARACTERS = {name: f"Images/{name}.png" for name in names}   #ordnet jedem namen sein bild zu                        
+        "The Witch","The Pied Piper","The Big Bad Wolf","King Thrushbeard","The Star Money Girl"]   # Personen Liste
+CHARACTERS = {name: f"Images/{name}.png" for name in names}   # Ordnet jedem Namen das dazugehörige Bild zu                        
 Max_Live = 3
 
-Greetings = ["Ooh  the famous knight {name}, I see. Lets see if you can best me.",#zufallige Begrüßungen
-"A losy jester not even worth remembering by name, but a word is a word i suppose.Just dont expeact to win",
+Greetings = ["Ooh the famous knight {name}, I see. Lets see if you can best me...",  # Zufällige Begrüßungen
+"A lousy jester not even worth remembering by name, but a promise is a promise I suppose. Just dont expect to win...",
 "A brave soul, I see. I will give you a chance to prove yourself. But be warned, the path ahead is treacherous.",
 "The king himself? I am honored to have you here. But do not let your title fool you, for the game I propose is not for the faint of heart."]
 
-#Game state
-st.session_state.setdefault("random_name", random.choice(names))  # alle Konstanten
+# Game state
+st.session_state.setdefault("random_name", random.choice(names))  # Alle Konstanten
 st.session_state.setdefault("lives", Max_Live)
 st.session_state.setdefault("guesser", True)
 st.session_state.setdefault("Game_over", False)
@@ -30,18 +30,18 @@ st.session_state.setdefault("time",0)
 st.session_state.setdefault("chat", [])
 st.session_state.setdefault("remaining", list(names))   
 st.session_state.setdefault("question_log", [])         
-st.session_state.setdefault("question_history", [])     
+st.session_state.setdefault("question_history", [])
 
-#Funktionen
-def start_game(): #startet das Spiel, setzt die Zeit und die Nachricht
+# Funktionen
+def start_game():   # Startet das Spiel, setzt die Zeit und die Nachricht
     st.session_state["time"] = time.time()
     st.session_state["started"] = True
-    st.session_state["message"] = "Dont Forget ask as much as you want, but you can only guess 3 times."
+    st.session_state["message"] = "Dont Forget to ask as much as you want, but you can only guess 3 times."
 
-def guess(): #guess knopf 
+def guess():    # Guess Knopf 
     st.session_state["guess_mode"] = not st.session_state["guess_mode"]
 
-def check_guess(user_guess): #guckt ob die Antwort richtig ist, wenn nicht wird ein leben abgezogen, wenn alle leben weg sind wird das spiel beendet
+def check_guess(user_guess):    # Guckt ob die Antwort richtig ist, wenn nicht wird ein Leben abgezogen, wenn alle Leben weg sind wird das Spiel beendet
     st.session_state["guess_mode"] = False
     if user_guess == st.session_state["random_name"]:
         st.session_state["message"] = "Correct! You guessed the name."
@@ -56,12 +56,12 @@ def check_guess(user_guess): #guckt ob die Antwort richtig ist, wenn nicht wird 
         else:
             st.session_state["message"] = f"{user_guess} is wrong! You have only ({st.session_state['lives']} trys left)"
 
-def give_up(): #aufgeben :////
+def give_up():  # Aufgeben :////
     st.session_state["Game_over"] = True
-    st.session_state["message"] = "So easy to be discurraged ?"   
+    st.session_state["message"] = "So easy to be discouraged?"   
     save_game(False)                                               
 
-def save_game(won): #speichert ergebnis für die stats seite
+def save_game(won): # Speichert Ergebnis für die Stats-Seite
     st.session_state["games"].append({
         "player_name": st.session_state["player_name"],
         "random_name": st.session_state["random_name"],
@@ -94,66 +94,66 @@ def ask_witch(question):
     except OpenAIError:
         return None                                                         
 
-#Oberfläche
+# Oberfläche
  # LLM: API-Key abfragen, stoppen wenn keiner da ist (wie in 07-aiapp.py)
 with st.sidebar:
     api_key = st.text_input("UOS AI API-Key", type="password", value=st.session_state.get("api_key", "")).strip()
-st.session_state["api_key"] = api_key        # Bei start over bleibt key
+st.session_state["api_key"] = api_key        # Bei start-over bleibt key
 
 if not api_key:
         st.info("Please enter your Uni Osnabrück API key. You can get one at https://ai-keys.uni-osnabrueck.de.")
         st.stop()
 client = OpenAI(base_url="https://litellm.uni-osnabrueck.de/v1", api_key=api_key, timeout=30, max_retries=1) #beschränlte wartezeit
 
-if not st.session_state["started"]: #startbildschirm
+if not st.session_state["started"]: # Startbildschirm
     st.title("Who am I?")
-    st.write("Let me know your name, little one. If you will, I have a proposal for you: guess who I am. If you fail, you will lose everything.")
-    st.session_state["player_name"] = st.text_input("Enter your name:", value=st.session_state["player_name"]) # nach start over bleibt name
+    st.write("Let me know your name, little one. If you will, I have a proposal for you: Guess who I am. If you fail, you will lose everything.")
+    st.session_state["player_name"] = st.text_input("Enter your name:", value=st.session_state["player_name"])  # Nach start-over bleibt name
     if st.session_state["player_name"]:                            # FIX: eingerückt
         st.write(random.choice(Greetings).format(name=st.session_state["player_name"]))
     st.button("Start Game", on_click=start_game, disabled=not st.session_state["player_name"])
     st.stop()
 
-forced_guess = st.session_state["questions"] >= 3 * (Max_Live - st.session_state["lives"] + 1) and not st.session_state["Game_over"]   # alle 3 Fragen muss geraten werden
-if forced_guess: #spieler wird gezwungen zu raten
+forced_guess = st.session_state["questions"] >= 3 * (Max_Live - st.session_state["lives"] + 1) and not st.session_state["Game_over"]   # Alle 3 Fragen muss geraten werden
+if forced_guess: # Spieler wird gezwungen zu raten
     st.write("Did you really think you can ask as much as you want? It is time for a Guess dear guest")
     st.session_state["guess_mode"] = True
 
 Lives_left = st.session_state["lives"]
-left, right = st.columns([2, 3])          #anpassung seiten aufteilung
+left, right = st.columns([3, 2])    # Anpassung Seiten Aufteilung
 
 with left: 
     st.write("Who am I?")
     cols = st.columns(5)
     for i, name in enumerate(names):
         if os.path.exists(CHARACTERS[name]):
-            cols[i % 5].image(CHARACTERS[name])
+            cols[i % 5].image(CHARACTERS[name], width=115)
         else:
             cols[i % 5].write("?")
         cols[i % 5].button(name,key=f"guess_{name}",on_click=check_guess,args=(name,),disabled=not st.session_state["guess_mode"] or st.session_state["Game_over"],use_container_width=True,)
 
-with right: #leben nachricht und chat
+with right: # Leben Nachricht und Chat
     if Lives_left > 0:
         st.image(["Images/heart.gif"] * Lives_left, width=36)
-    st.write(st.session_state["message"]) #richtig/falsch nachricht
+    st.write(st.session_state["message"]) # Richtig/ falsch Nachricht
 
-    with st.container(height=350):        #damit nur chat
+    with st.container(height=350):        # Chatbox
         for msg in st.session_state["chat"]:
             with st.chat_message(msg["role"]):
                 st.write(msg["content"])
 
     if "retry_text" in st.session_state:
         st.session_state["question_input"] = st.session_state.pop("retry_text")
-    question = st.chat_input("Ask me a yes/no question...", key="question_input", disabled=st.session_state["Game_over"] or forced_guess) #eingabe feld für frage nach dem spielende gespertt
+    question = st.chat_input("Ask me a yes/no question...", key="question_input", disabled=st.session_state["Game_over"] or forced_guess) # Eingabe Feld für Frage nach dem Spielende gespertt
     if question:
         st.session_state["chat"].append({"role": "user", "content": question})
         with st.spinner("The witch is thinking..."):
             yes = ask_witch(question)
         if yes is None:
             st.session_state["retry_text"] = question
-            reply = "You know the rules, just Yes and No questions. Try again, dear."
+            reply = "That is no proper yes/no question (or my crystal ball is cloudy). Try again, dear."
         else:
-            answer = st.session_state["random_name"] in yes                       # nur ja wenn figur dabei
+            answer = st.session_state["random_name"] in yes # Nur ja wenn Figur dabei
             before = len(st.session_state["remaining"])
             st.session_state["remaining"] = [n for n in st.session_state["remaining"] if (n in yes) == answer]
             st.session_state["questions"] += 1
@@ -167,7 +167,7 @@ with right: #leben nachricht und chat
         st.session_state["chat"].append({"role": "assistant", "content": reply})
         st.rerun()
 
-    #Knöpfe
+    # Knöpfe
     st.button("Guess", key="guess_button", on_click=guess, disabled=st.session_state["Game_over"] or forced_guess)
     st.button("Give Up", key="give_up_button", on_click=give_up, disabled=st.session_state["Game_over"])
     if st.session_state["Game_over"]:
