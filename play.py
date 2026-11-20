@@ -4,9 +4,9 @@ import time
 import os
 # from openai import OpenAI, OpenAIError        # LLM: wie in 07-aiapp.py
 
-names = ["Snow White","Cinderella","Red Riding Hood","Sleeping Beauty","Rapunzel","Hansel","Gretel","The Pied Piper","The Snow Queen",
-        "Pinocchio","The Frog Prince","Puss in Boots","The Bremen Town Musicians","Mother Holle","The Genie","The Seven Dwarfs","Rumpelstiltskin",
-        "The Big Bad Wolf","King Thrushbeard","The Witch"]#Personen Liste    # FIX: ":" hinter Snow White entfernt
+names = ["Pinocchio","The Frog Prince","Puss in Boots","The Bremen Town Musicians","Mother Holle","The Genie","The Seven Dwarfs","Rumpelstiltskin",
+        "Snow White","Cinderella","Red Riding Hood","Sleeping Beauty","Rapunzel","Rapunzel (Tower)","Hansel","Gretel",
+        "The Witch","The Pied Piper","The Snow Queen","The Big Bad Wolf","King Thrushbeard","The Star Money Girl"]#Personen Liste
 CHARACTERS = {name: f"Images/{name}.png" for name in names}                          
 Max_Live = 3
 
@@ -130,7 +130,7 @@ for i, name in enumerate(names):
     if os.path.exists(CHARACTERS[name]):
         cols[i % 5].image(CHARACTERS[name])
     else:
-        cols[i % 5].write("❓")
+        cols[i % 5].write("?")
     cols[i % 5].button(name,key=f"guess_{name}",on_click=check_guess,args=(name,),disabled=not st.session_state["guess_mode"] or st.session_state["Game_over"],use_container_width=True,)
 for msg in st.session_state["chat"]:  
     with st.chat_message(msg["role"]):
