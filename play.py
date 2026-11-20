@@ -5,7 +5,7 @@ import os
 from openai import OpenAI, OpenAIError       
 
 names = ["Pinocchio","The Frog Prince","Puss in Boots","The Bremen Town Musicians","Mother Holle","The Genie","The Seven Dwarfs","Rumpelstiltskin",
-        "Snow White","Cinderella","Red Riding Hood","Sleeping Beauty","Rapunzel","Hansel","Gretel",
+        "Snow White","Cinderella","Red Riding Hood","Sleeping Beauty","The Snow Queen","Hansel","Gretel",
         "The Witch","The Pied Piper","The Big Bad Wolf","King Thrushbeard","The Star Money Girl"]#Personen Liste
 CHARACTERS = {name: f"Images/{name}.png" for name in names}                          
 Max_Live = 3
@@ -98,7 +98,7 @@ with st.sidebar:
 if not api_key:
         st.info("Please enter your Uni Osnabrück API key. You can get one at https://ai-keys.uni-osnabrueck.de.")
         st.stop()
-client = OpenAI(base_url="https://litellm.uni-osnabrueck.de/v1", api_key=api_key)
+client = OpenAI(base_url="https://litellm.uni-osnabrueck.de/v1", api_key=api_key, timeout=30, max_retries=1) #beschränlte wartezeit
 
 if not st.session_state["started"]:
     st.title("Who am I?")
